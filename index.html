@@ -25,6 +25,9 @@
         box-sizing: border-box;
         pointer-events: none; /* ガイド枠がクリックを妨げないようにする */
       }
+      #download, #share {
+        display: none; /* 初期状態では非表示 */
+      }
     </style>
   </head>
   <body>
@@ -34,6 +37,7 @@
     </div>
     <button id="capture">撮影</button>
     <a id="download" style="display: none;">ダウンロード</a> <!-- ダウンロードリンク -->
+    <button id="share" style="display: none;">共有</button> <!-- 共有ボタン -->
     <canvas id="canvas" style="display: none"></canvas>
     <div>
       <img id="photo" alt="撮影した画像" />
@@ -63,15 +67,38 @@
 
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        const dataURL = canvas.toDataURL("image/png");
-        let photo = document.getElementById("photo");
-        photo.setAttribute("src", dataURL);
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          let photo = document.getElementById("photo");
+          photo.setAttribute("src", url);
 
-        // ダウンロードリンクを設定する
-        const downloadButton = document.getElementById("download");
-        downloadButton.href = dataURL;
-        downloadButton.download = "captured_image.png";
-        downloadButton.style.display = "block";
+          // ダウンロードリンクを設定する
+          const downloadButton = document.getElementById("download");
+          downloadButton.href = url;
+          downloadButton.download = "captured_image.png";
+          downloadButton.style.display = "block";
+
+          // 共有ボタンを表示する
+          const shareButton = document.getElementById("share");
+          shareButton.style.display = "block";
+
+          // 共有ボタンのクリックイベント
+          shareButton.addEventListener("click", () => {
+            if (navigator.share) {
+              navigator.share({
+                title: 'キャプチャ画像',
+                text: '撮影した画像を共有します。',
+                url: url
+              }).then(() => {
+                console.log('共有成功');
+              }).catch((error) => {
+                console.error('共有に失敗しました:', error);
+              });
+            } else {
+              alert('共有機能がサポートされていません。');
+            }
+          });
+        }, "image/png");
       });
     </script>
   </body>
