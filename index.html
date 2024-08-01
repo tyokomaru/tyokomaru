@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>身分証撮影アプリ</title>
+   <style>
+     .camera-container {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin: auto;
+}
+video {
+  width: 100%;
+  height: auto;
+}
+.guide-frame {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  border: 2px dashed red;
+  box-sizing: border-box;
+  pointer-events: none; /* ガイド枠がクリックを妨げないようにする */
+}
+   </style>
+
+  </head>
+  <body>
+    <div class="camera-container">
+      <video id="video" autoplay muted playsinline></video>
+      <div class="guide-frame"></div>
+    </div>
+    <button id="capture">撮影</button>
+    <canvas id="canvas" style="display: none"></canvas>
+
+
+    <script>
+    
+navigator.mediaDevices
+  .getUserMedia({ video: true })
+  .then((stream) => {
+    const video = document.getElementById("video");
+    video.srcObject = stream;
+  })
+  .catch((error) => {
+    console.error("カメラにアクセスできませんでした:", error);
+  });
+
+
+
+document.getElementById("capture").addEventListener("click", () => {
+  const canvas = document.getElementById("canvas");
+  const video = document.getElementById("video");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const context = canvas.getContext("2d");
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+ 
+  const dataURL = canvas.toDataURL("image/png");
+  console.log("キャプチャした画像のデータURL:", dataURL);
+});
+
+    </script>
+  </body>
+</html>
