@@ -4,29 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>身分証撮影アプリ</title>
-   <style>
-     .camera-container {
-  position: relative;
-  width: 100%;
-  max-width: 640px;
-  margin: auto;
-}
-video {
-  width: 100%;
-  height: auto;
-}
-.guide-frame {
-  position: absolute;
-  top: 10%;
-  left: 10%;
-  width: 80%;
-  height: 80%;
-  border: 2px dashed red;
-  box-sizing: border-box;
-  pointer-events: none; /* ガイド枠がクリックを妨げないようにする */
-}
-   </style>
-
+    <style>
+      .camera-container {
+        position: relative;
+        width: 100%;
+        max-width: 640px;
+        margin: auto;
+      }
+      video {
+        width: 100%;
+        height: auto;
+      }
+      .guide-frame {
+        position: absolute;
+        top: 10%;
+        left: 10%;
+        width: 80%;
+        height: 80%;
+        border: 2px dashed red;
+        box-sizing: border-box;
+        pointer-events: none; /* ガイド枠がクリックを妨げないようにする */
+      }
+    </style>
   </head>
   <body>
     <div class="camera-container">
@@ -34,35 +33,46 @@ video {
       <div class="guide-frame"></div>
     </div>
     <button id="capture">撮影</button>
+    <a id="download" style="display: none;">ダウンロード</a> <!-- ダウンロードリンク -->
     <canvas id="canvas" style="display: none"></canvas>
-
+    <div>
+      <img id="photo" alt="撮影した画像" />
+    </div>
 
     <script>
-    
-navigator.mediaDevices
-  .getUserMedia({ video: true })
-  .then((stream) => {
-    const video = document.getElementById("video");
-    video.srcObject = stream;
-  })
-  .catch((error) => {
-    console.error("カメラにアクセスできませんでした:", error);
-  });
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          const video = document.getElementById("video");
+          video.srcObject = stream;
+        })
+        .catch((error) => {
+          console.error("カメラにアクセスできませんでした:", error);
+        });
 
+      document.getElementById("capture").addEventListener("click", () => {
+        const canvas = document.getElementById("canvas");
+        const video = document.getElementById("video");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext("2d");
 
+        // 画像を水平に反転する
+        context.translate(canvas.width, 0);
+        context.scale(-1, 1);
 
-document.getElementById("capture").addEventListener("click", () => {
-  const canvas = document.getElementById("canvas");
-  const video = document.getElementById("video");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const context = canvas.getContext("2d");
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
- 
-  const dataURL = canvas.toDataURL("image/png");
-  console.log("キャプチャした画像のデータURL:", dataURL);
-});
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+        const dataURL = canvas.toDataURL("image/png");
+        let photo = document.getElementById("photo");
+        photo.setAttribute("src", dataURL);
+
+        // ダウンロードリンクを設定する
+        const downloadButton = document.getElementById("download");
+        downloadButton.href = dataURL;
+        downloadButton.download = "captured_image.png";
+        downloadButton.style.display = "block";
+      });
     </script>
   </body>
 </html>
