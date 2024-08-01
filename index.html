@@ -78,13 +78,11 @@
           downloadButton.download = "captured_image.png";
           downloadButton.style.display = "block";
 
-          // 共有ボタンを表示する
+          // 共有ボタンの表示とイベント設定
           const shareButton = document.getElementById("share");
-          shareButton.style.display = "block";
-
-          // 共有ボタンのクリックイベント
-          shareButton.addEventListener("click", () => {
-            if (navigator.share) {
+          if (navigator.share) {
+            shareButton.style.display = "block";
+            shareButton.addEventListener("click", () => {
               navigator.share({
                 title: 'キャプチャ画像',
                 text: '撮影した画像を共有します。',
@@ -94,10 +92,12 @@
               }).catch((error) => {
                 console.error('共有に失敗しました:', error);
               });
-            } else {
-              alert('共有機能がサポートされていません。');
-            }
-          });
+            });
+          } else {
+            // 共有機能がサポートされていない場合のフォールバック
+            shareButton.style.display = "none";
+            alert('お使いのブラウザは共有機能をサポートしていません。最新のブラウザをご利用ください。');
+          }
         }, "image/png");
       });
     </script>
