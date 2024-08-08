@@ -133,6 +133,33 @@
         display: block;
       }
 
+      #finalconfirmation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+      /*追加8/8*/
+#download,
+#retakeAll,
+#finish {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: orange;
+  color: black;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+#download {
+  display: none;
+}
 
       /* メニューが表示されたときの状態 */
       #nav-menu.show {
@@ -286,6 +313,15 @@
     <div class="scr">
       <p>利用規約とか撮影方法の画面をつくる</p>
     </div>
+
+    <!-- 追加8/8 -->
+    <div class="scr" id="finalconfirmation">
+  <p>完成画像をだす</p>
+  <a id="download" href="#" download>ダウンロード</a>
+  <button id="retakeAll">撮り直す</button>
+  <button id="finish">撮影終了</button>
+</div>
+    
     <!-- ここからJS !!! -->
     <script>
       //画面遷移（表示非表示）の設定
@@ -712,6 +748,15 @@
           overlay.classList.remove("show"); // オーバーレイを非表示
         });
       });
+
+      //追加8/8
+      document.getElementById('Shootingfinish').addEventListener('click', () => {
+  // ここで完成画像を生成するコードを追加します
+  screenCount = 10;
+  showScreen(screenCount);
+  document.getElementById('download').style.display = 'inline-block';
+});
+      
     </script>
   </body>
 </html>
