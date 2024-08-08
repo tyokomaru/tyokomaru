@@ -173,3 +173,13 @@ header {
   color: red;
   display: none; /* 初期状態では表示しない */
 }
+
+/*8/8追加 確認画面（最終）のスタイル */
+ #finalconfirmation {
+    display: flex;
+    flex-direction: column; /* 縦に並べる */
+    justify-content: center; /* 縦方向の中央に配置 */
+    align-items: center; /* 横方向の中央に配置 */
+    height: 100vh; /* ビューポートの高さ全体を使用 */
+    text-align: center; /* テキストを中央揃え */
+  }
