@@ -130,31 +130,3 @@ header {
   color: red;
   display: none;
 }
-
-#finalconfirmation {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  text-align: center;
-}
-
-
-#download,
-#retakeAll,
-#finish {
-  display: inline-block;
-  margin: 10px;
-  padding: 10px 20px;
-  background-color: orange;
-  color: black;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  font-size: 20px;
-}
-
-#download {
-  display: none;
-}
