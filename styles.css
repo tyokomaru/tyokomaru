@@ -1,13 +1,12 @@
-/* 追加分CSS↓ */
 #kiyaku,
 #typeselect,
 #cameraselect,
 #tempselect,
 #Beforeshooting {
   display: flex;
-  justify-content: center; /* 横幅の真ん中に配置 */
-  align-items: center; /* 縦方向の中央に配置 */
-  height: 100vh; /* ビューポートの高さ全体を使用 */
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
   text-align: center;
 }
 #kiyakudoui,
@@ -20,7 +19,6 @@
   cursor: pointer;
   font-size: 30px;
 }
-
 #tops,
 #bottoms {
   background-color: orange;
@@ -31,7 +29,6 @@
   cursor: pointer;
   font-size: 30px;
 }
-
 #outcamera,
 #incamera {
   background-color: orange;
@@ -42,7 +39,6 @@
   cursor: pointer;
   font-size: 30px;
 }
-/* 追加分CSS↑ */
 .scr {
   display: none;
 }
@@ -53,7 +49,7 @@
 }
 video {
   width: 100%;
-  display: block; /* displayをblockに設定して横幅を強制する */
+  display: block;
 }
 .guide-frame {
   position: absolute;
@@ -63,13 +59,12 @@ video {
   width: 60%;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  pointer-events: none; /* ガイド枠がクリックを妨げないようにする */
+  pointer-events: none;
 }
 #photoF,
 #photoB {
   height: 200px;
 }
-/* メニュー */
 header {
   background-color: #333;
   color: white;
@@ -77,65 +72,55 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: relative; /* 位置を固定するために relative を設定 */
-  z-index: 2; /* メニューより上に表示されるように z-index を設定 */
+  position: relative;
+  z-index: 2;
 }
-
 #menu-icon {
   font-size: 30px;
   cursor: pointer;
 }
-
 #nav-menu {
   display: none;
   position: absolute;
-  top: 100%; /* ヘッダーの下にメニューが表示されるように設定 */
+  top: 100%;
   left: 0;
   width: 100%;
   background-color: #333;
   overflow: hidden;
-  height: 0; /* 初期状態では高さを0にする */
-  transition: height 0.3s ease-out; /* 高さのアニメーション */
+  height: 0;
+  transition: height 0.3s ease-out;
 }
-
 #nav-menu ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-
 #nav-menu ul li {
   padding: 10px;
   border-bottom: 1px solid #444;
 }
-
 #nav-menu ul li a {
   color: white;
   text-decoration: none;
   display: block;
 }
-
-/* メニューが表示されたときの状態 */
 #nav-menu.show {
-  height: auto; /* 自動で高さを設定する */
+  height: auto;
   display: block;
 }
-/* 背景を暗くするオーバーレイ */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 半透明の黒 */
+  background-color: rgba(0, 0, 0, 0.5);
   display: none;
-  z-index: 1; /* メニューより下に表示されるように設定 */
+  z-index: 1;
 }
 .overlay.show {
-  display: block; /* 追加: オーバーレイの表示/非表示を制御 */
+  display: block;
 }
-
-/* タイマー */
 #timer {
   position: absolute;
   top: 10px;
@@ -143,5 +128,5 @@ header {
   transform: translateX(-50%);
   font-size: 2em;
   color: red;
-  display: none; /* 初期状態で非表示 */
+  display: none;
 }
