@@ -165,6 +165,8 @@ overlay.addEventListener("click", () => {
   overlay.classList.remove("show");
 });
 
+
+// 8/8追加
 document.getElementById('Shootingfinish').addEventListener('click', () => {
   // ここで完成画像を生成するコードを追加します
   screenCount = 10;
