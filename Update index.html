@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>撮影アプリ</title>
+    <style>
+      /* 追加分CSS↓ */
+      #kiyaku,
+      #typeselect,
+      #cameraselect,
+      #tempselect,
+      #Beforeshooting {
+        display: flex;
+        justify-content: center; /* 横幅の真ん中に配置 */
+        align-items: center; /* 縦方向の中央に配置 */
+        height: 100vh; /* ビューポートの高さ全体を使用 */
+        text-align: center;
+      }
+      #kiyakudoui,
+      #startshoot {
+        background-color: orange;
+        color: black;
+        padding: 20px 40px;
+        margin: 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 30px;
+      }
+
+
+      #tops,
+      #bottoms {
+        background-color: orange;
+        color: black;
+        padding: 40px 70px;
+        margin: 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 30px;
+      }
+
+
+      #outcamera,
+      #incamera {
+        background-color: orange;
+        color: black;
+        padding: 70px 90px;
+        margin: 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 30px;
+      }
+
+
+      /* 追加分CSS↑ */
+      .scr {
+        display: none;
+      }
+      .camera-container {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+      }
+      video {
+        width: 100%;
+        display: block; /* displayをblockに設定して横幅を強制する */
+      }
+      .guide-frame {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+
+        width: 60%;
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        pointer-events: none; /* ガイド枠がクリックを妨げないようにする */
+      }
+      #photoF,
+      #photoB {
+        height: 200px;
+      }
+      /* メニュー */
+      header {
+        background-color: #333;
+        color: white;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative; /* 位置を固定するために relative を設定 */
+        z-index: 2; /* メニューより上に表示されるように z-index を設定 */
+      }
+
+
+      #menu-icon {
+        font-size: 30px;
+        cursor: pointer;
+      }
+
+
+      #nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%; /* ヘッダーの下にメニューが表示されるように設定 */
+        left: 0;
+        width: 100%;
+        background-color: #333;
+        overflow: hidden;
+        height: 0; /* 初期状態では高さを0にする */
+        transition: height 0.3s ease-out; /* 高さのアニメーション */
+      }
+
+
+      #nav-menu ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+
+      #nav-menu ul li {
+        padding: 10px;
+        border-bottom: 1px solid #444;
+      }
+
+
+      #nav-menu ul li a {
+        color: white;
+        text-decoration: none;
+        display: block;
+      }
+
+
+      /* メニューが表示されたときの状態 */
+      #nav-menu.show {
+        height: auto; /* 自動で高さを設定する */
+        display: block;
+      }
+      /* 背景を暗くするオーバーレイ */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* 半透明の黒 */
+        display: none;
+        z-index: 1; /* メニューより下に表示されるように設定 */
+      }
+      .overlay.show {
+        display: block; /* 追加: オーバーレイの表示/非表示を制御 */
+      }
+
+
+      /* タイマー */
+      #timer {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2em;
+        color: red;
+        display: none; /* 初期状態では表示しない */
+      }
+    </style>
+  </head>
+
+
+  <body>
+    <header>
+      <!-- <h3>タブメニュー</h3> -->
+      <button id="back-button">戻る</button>
+
+
+      <div id="menu-icon">&#9776;</div>
+      <nav id="nav-menu">
+        <ul>
+          <li id="li1">服の種類選択画面に戻る</li>
+          <li id="li2">撮影方法</li>
+          <li id="li3">利用規約</li>
+        </ul>
+      </nav>
+    </header>
+    <!-- 追加: オーバーレイ要素 -->
+    <div class="overlay" id="overlay"></div>
+
+
+    <!-- 規約画面 -->
+    <div class="scr" id="kiyaku">
+      <p>規約(初回だけ表示させる)</p>
+      <button id="kiyakudoui">同意する</button>
+    </div>
+
+
+    <!-- タイプ選択画面 -->
+    <div class="scr" id="typeselect">
+      <p>服の種類を選んでください</p>
+      <button id="tops">トップス</button>
+      <button id="bottoms">ボトムス</button>
+    </div>
+    <!-- 撮影方法選択画面 -->
+    <div class="scr" id="cameraselect">
+      <p>撮影方法を選んでください</p>
+      <!-- 外カメ内カメ変更ボタン -->
+      <button id="outcamera">外カメ</button>
+      <button id="incamera">内カメ</button>
+    </div>
+    <!-- トップス画面orボトムス画面　(テンプレ選択) -->
+    <div class="scr" id="tempselect">
+      <p>服の形を選んでください(トップスボトムス2種つくる)</p>
+      <button>1</button><button>2</button><button>3</button><button>4</button
+      ><button>5</button>
+      <p>↑js側から挿入で作るほうがいいかも</p>
+      <button id="temp">デモ版はこのボタン</button>
+    </div>
+    <!-- 撮影注意画面 -->
+    <div class="scr" id="Beforeshooting">
+      <p>撮影時の注意点</p>
+      <button id="startshoot">撮影開始</button>
+    </div>
+    <!-- 撮影画面 -->
+    <div class="scr" id="shooting">
+      <p id="shootingtext">前面を撮影してください</p>
+      <!-- カメラ本体 -->
+      <div class="camera-container">
+        <video id="video" autoplay muted playsinline></video>
+        <div>
+          <!-- ガイドフレーム -->
+          <img
+            class="guide-frame"
+            src="maruma-ku-illust3.png"
+            alt="ガイド画像がでます"
+          />
+          <!-- 追加: タイマー表示 -->
+          <div id="timer">5</div>
+        </div>
+        <!-- 撮影ボタン -->
+        <button id="capture">撮影</button>
+        <button id="toggle-camera">カメラ切り替え</button>
+
+
+        <!-- ↓カメラの付属 -->
+        <canvas id="canvas" style="display: none"></canvas>
+      </div>
+    </div>
+    <!-- 確認画面（前） -->
+    <div class="scr" id="previewF">
+      <p>プレビュー（前）</p>
+      <div>
+        <img id="photoF" alt="ここに撮影した前面画像がでます" />
+      </div>
+      <button id="RetakeF">撮りなおす</button>
+      <button id="nextshoot">背面撮影に進む</button>
+    </div>
+    <!-- 確認画面（背） -->
+    <div class="scr" id="previewB">
+      <p>プレビュー（背）</p>
+      <div>
+        <img id="photoB" alt="ここに撮影した背面画像がでます" />
+      </div>
+      <button id="RetakeB">撮りなおす</button>
+      <button id="Shootingfinish">進む</button>
+    </div>
+    <!-- トップスの場合の袖選択画面3つ -->
+    <div class="scr" id="sleeve1"><p>袖について1</p></div>
+    <div class="scr" id="sleeve2"><p>袖について2</p></div>
+    <div class="scr" id="sleeve3"><p>袖について3</p></div>
+
+
+    <!-- 確認画面（最終） -->
+    <div class="scr" id="finalconfirmation">
+      <p>完成画像をだす</p>
+      <a id="download" style="display: none">ダウンロード</a>
+      <button id="retakeAll">撮り直す</button>
+      <button id="finish">撮影終了</button>
+    </div>
+    <!-- 最終画面 -->
+    <div class="scr">
+      <p>撮影終了</p>
+      <button id="typeselectbtn">撮影選択画面に戻る</button>
+    </div>
+    <!-- メニューからの遷移先画面 -->
+    <div class="scr">
+      <p>利用規約とか撮影方法の画面をつくる</p>
+    </div>
+    <!-- ここからJS !!! -->
+    <script>
+      //画面遷移（表示非表示）の設定
+      let screenCount = 0;
+      const screennum = document.getElementsByClassName("scr");
+      console.log(screennum); //確認用コンソール
+
+
+      function showScreen(index) {
+        for (let i = 0; i < screennum.length; i++) {
+          screennum[i].style.display = i === index ? "block" : "none";
+        }
+      }
+      // 初期表示
+      showScreen(screenCount);
+
+
+      //規約同意ボタン
+      const kiyakudoui = document
+        .getElementById("kiyakudoui")
+        .addEventListener("click", () => {
+          screenCount = 1;
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+      //トップスボトムスボタン
+      const tops = document
+        .getElementById("tops")
+        .addEventListener("click", () => {
+          screenCount = 2;
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+      const bottoms = document
+        .getElementById("bottoms")
+        .addEventListener("click", () => {
+          screenCount = 2;
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+      //内カメ外カメ設定ボタン
+      //内↓
+      const incamera = document
+        .getElementById("incamera")
+        .addEventListener("click", () => {
+          screenCount = 3;
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+      //外カメ
+      const outcamera = document
+        .getElementById("outcamera")
+        .addEventListener("click", () => {
+          isFrontCamera = !isFrontCamera;
+          startCamera();
+
+
+          screenCount = 3;
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+
+
+      //テンプレ選択画面
+      const temp = document
+        .getElementById("temp")
+        .addEventListener("click", () => {
+          screenCount = 4;
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+
+
+      //撮影開始ボタンにて、カメラ画面への切り替えと、カウントを１回目に設定
+      const startshoot = document
+        .getElementById("startshoot")
+        .addEventListener("click", () => {
+          captureCount = 1;
+
+
+          screenCount = 5;
+          shootText();
+
+
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+
+
+      //次の撮影に進むボタン
+      const nextshoot = document
+        .getElementById("nextshoot")
+        .addEventListener("click", () => {
+          //背面撮影＝count2にする
+          //カメラ画面にもどるようにする
+          captureCount++;
+
+
+          shootText();
+
+
+          screenCount = 5;
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+
+
+      //撮りなおすボタン 前面
+      const RetakeF = document
+        .getElementById("RetakeF")
+        .addEventListener("click", () => {
+          //カウントはそのまま、カメラ画面にもどるイベントをいれる
+          screenCount = 5;
+          shootText();
+
+
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+      //撮りなおすボタン 背面
+      const RetakeB = document
+        .getElementById("RetakeB")
+        .addEventListener("click", () => {
+          // captureCount--;
+          shootText();
+
+
+          //カウントはそのまま、カメラ画面にもどるイベントをいれる
+          screenCount = 5;
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+
+
+      //撮り終わり
+      const Shootingfinish = document
+        .getElementById("Shootingfinish")
+        .addEventListener("click", () => {
+          screenCount = 11; //袖飛ばして確認画面
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+
+
+      //撮影終了後
+      const retakeAll = document
+        .getElementById("retakeAll")
+        .addEventListener("click", () => {
+          captureCount = 0; //撮影カウントを戻す
+          // shootingtext.textContent = "前面を撮影してください";
+
+
+          screenCount = 4; //撮影時の注意点にもどる
+
+
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+
+
+      const finish = document
+        .getElementById("finish")
+        .addEventListener("click", () => {
+          screenCount = 12;
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+
+
+      const typeselectbtn = document
+        .getElementById("typeselectbtn")
+        .addEventListener("click", () => {
+          captureCount = 0; //撮影カウントを戻す
+          let isFrontCamera = true; //初期は内カメ
+          // shootingtext.textContent = "前面を撮影してください";
+
+
+          screenCount = 1;
+          console.log(screenCount);
+          showScreen(screenCount);
+        });
+
+
+      //カメラ系統準備↓
+      navigator.mediaDevices.getUserMedia({ video: true });
+
+
+      let currentStream;
+      let isFrontCamera = true; //初期は内カメ
+      let captureCount = 0; //撮影２回するため。
+
+
+      function startCamera() {
+        const constraints = {
+          video: {
+            facingMode: isFrontCamera ? "user" : "environment",
+          },
+        };
+
+
+        navigator.mediaDevices
+          .getUserMedia(constraints)
+          .then((stream) => {
+            if (currentStream) {
+              currentStream.getTracks().forEach((track) => track.stop());
+            }
+            currentStream = stream;
+            const video = document.getElementById("video");
+            video.srcObject = stream;
+          })
+          .catch((error) => {
+            console.error("カメラにアクセスできませんでした:", error);
+          });
+      }
+
+
+      //テキストを変える
+      function shootText() {
+        const shootingtext = document.getElementById("shootingtext");
+        if (captureCount < 2) {
+          shootingtext.textContent = "前面を撮影してください";
+        } else if ((captureCount = 2)) {
+          shootingtext.textContent = "背面を撮影してください";
+        }
+      }
+
+
+      function captureImage() {
+        //撮影と、画像表示のイベント
+
+
+        const canvas = document.getElementById("canvas");
+        const video = document.getElementById("video");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext("2d");
+
+
+        // 画像を水平に反転する(内カメのときだけ)
+        if (isFrontCamera) {
+          context.translate(canvas.width, 0);
+          context.scale(-1, 1);
+        }
+
+
+        //画像を表示
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataURL = canvas.toDataURL("image/png");
+
+
+        if (captureCount === 1) {
+          const photoF = document.getElementById("photoF");
+          photoF.setAttribute("src", dataURL);
+          //↓確認用コンソール
+          console.log("キャプチャした画像のデータURL:", dataURL);
+          //確認画面へ遷移
+          screenCount = 6;
+          console.log(screenCount);
+          showScreen(screenCount);
+        } else if (captureCount === 2) {
+          const photoB = document.getElementById("photoB");
+          photoB.setAttribute("src", dataURL);
+          screenCount = 7;
+          console.log(screenCount);
+          showScreen(screenCount);
+        }
+
+
+        // ダウンロードリンクを設定する
+        const downloadButton = document.getElementById("download");
+        downloadButton.href = dataURL;
+
+
+        //画像に名前をつけて、ダウンロード可能に
+        downloadButton.download = "captured_image.png";
+        downloadButton.style.display = "block";
+      }
+
+
+      //内カメ外カメのトグル
+      document.getElementById("toggle-camera").addEventListener("click", () => {
+        isFrontCamera = !isFrontCamera;
+        startCamera();
+      });
+
+
+      startCamera();
+
+
+      //撮影ボタンにイベント挿入
+      // タイマーの追加
+      document.getElementById("capture").addEventListener("click", () => {
+        const timer = document.getElementById("timer");
+        let count = 5;
+        timer.style.display = "block"; // タイマーを表示
+
+
+        // タイマーを更新する関数
+        function updateTimer() {
+          timer.textContent = count;
+          if (count === 0) {
+            clearInterval(countdown);
+            timer.style.display = "none"; // タイマーを非表示
+            captureImage(); // 写真を撮影
+          }
+          count--;
+        }
+
+
+        updateTimer(); // 初期カウントを表示
+        let countdown = setInterval(updateTimer, 1000); // 1秒ごとにカウントダウン
+      });
+
+
+      //メニュー↓
+      //戻るボタン
+      var backbtn = true;
+      const backButton = document.getElementById("back-button");
+      backButton.addEventListener("click", function () {
+        if (backbtn) {
+          if (screenCount == 6) {
+            //前面確認画面
+            //カウントはそのまま、カメラ画面にもどるイベントをいれる
+            screenCount = 5;
+            shootText();
+
+
+            console.log(screenCount);
+            showScreen(screenCount);
+          } else if (screenCount == 7) {
+            //背面確認画面
+            shootText();
+
+
+            //カウントはそのまま、カメラ画面にもどるイベントをいれる
+            screenCount = 5;
+            console.log(screenCount);
+            showScreen(screenCount);
+          } else if (screenCount == 11) {
+            //最終確認画面
+            screenCount = 7;
+            showScreen(screenCount);
+          } else if (screenCount == 13) {
+            console.log(seni);
+            screenCount = seni;
+            console.log(screenCount);
+            showScreen(screenCount);
+          } else if (screenCount > 0) {
+            //他の画面（規約以外）
+            screenCount--;
+            console.log(screenCount);
+            showScreen(screenCount);
+          }
+        }
+      });
+
+
+      let seni = 0;
+
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuIcon = document.getElementById("menu-icon");
+        const navMenu = document.getElementById("nav-menu");
+        const overlay = document.getElementById("overlay");
+
+
+        menuIcon.addEventListener("click", function () {
+          // メニューの表示状態をトグルする
+          if (navMenu.classList.contains("show")) {
+            navMenu.classList.remove("show");
+            navMenu.style.height = "0"; // メニューを非表示にするとき高さを0に
+            backButton.style.opacity = 1; //戻るボタンが可視化
+            backbtn = true;
+
+
+            overlay.classList.remove("show"); // オーバーレイを非表示
+          } else {
+            navMenu.classList.add("show");
+            navMenu.style.height = navMenu.scrollHeight + "px"; // メニューの高さを内容に合わせて設定
+            //戻るボタンを押せなくする
+            backbtn = false;
+            backButton.style.opacity = 0;
+            overlay.classList.add("show"); // オーバーレイを表示
+          }
+        });
+
+
+        //メニュー遷移先設定
+        const li1 = document
+          .getElementById("li1")
+          .addEventListener("click", () => {
+            screenCount = 1;
+            console.log(screenCount);
+            showScreen(screenCount);
+          });
+
+
+        const li2 = document
+          .getElementById("li2")
+          .addEventListener("click", () => {
+            seni = screenCount; //戻ってくる画面を代入する
+            //後に撮影方法画面に変更
+            screenCount = 13;
+            console.log(screenCount);
+            showScreen(screenCount);
+          });
+        const li3 = document
+          .getElementById("li3")
+          .addEventListener("click", () => {
+            seni = screenCount; //戻ってくる画面を代入する
+
+
+            //後に利用規約画面に変更
+            screenCount = 13;
+            console.log(screenCount);
+            showScreen(screenCount);
+          });
+
+
+        // オーバーレイをクリックしたときにメニューとオーバーレイを非表示にする
+        overlay.addEventListener("click", function () {
+          navMenu.classList.remove("show");
+          navMenu.style.height = "0"; // メニューを非表示にするとき高さを0に
+          overlay.classList.remove("show"); // オーバーレイを非表示
+        });
+      });
+    </script>
+  </body>
+</html>
