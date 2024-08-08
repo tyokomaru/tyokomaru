@@ -1,166 +1,148 @@
-// 画面遷移（表示非表示）の設定
-let screenCount = 0;
-const screennum = document.getElementsByClassName("scr");
-console.log(screennum); // 確認用コンソール
+document.addEventListener("DOMContentLoaded", () => {
+  const pages = document.querySelectorAll(".scr");
+  const togglePages = (id) => {
+    pages.forEach((page) => (page.style.display = "none"));
+    document.getElementById(id).style.display = "flex";
+  };
 
-function showScreen(index) {
-  for (let i = 0; i < screennum.length; i++) {
-    screennum[i].style.display = i === index ? "block" : "none";
-  }
-}
-// 初期表示
-showScreen(screenCount);
+  document.getElementById("kiyakudoui").onclick = () =>
+    togglePages("typeselect");
+  document.getElementById("tops").onclick = () => togglePages("cameraselect");
+  document.getElementById("bottoms").onclick = () => togglePages("cameraselect");
+  document.getElementById("outcamera").onclick = () =>
+    togglePages("tempselect");
+  document.getElementById("incamera").onclick = () =>
+    togglePages("tempselect");
+  document.getElementById("temp").onclick = () => togglePages("Beforeshooting");
+  document.getElementById("startshoot").onclick = () => togglePages("shooting");
+  document.getElementById("nextshoot").onclick = () => togglePages("shooting");
+  document.getElementById("Shootingfinish").onclick = () =>
+    togglePages("finalconfirmation");
 
-// 規約同意ボタン
-const kiyakudoui = document
-  .getElementById("kiyakudoui")
-  .addEventListener("click", () => {
-    screenCount = 1;
-    console.log(screenCount);
-    showScreen(screenCount);
-  });
-// トップスボトムスボタン
-const tops = document
-  .getElementById("tops")
-  .addEventListener("click", () => {
-    screenCount = 2;
-    console.log(screenCount);
-    showScreen(screenCount);
-  });
-const bottoms = document
-  .getElementById("bottoms")
-  .addEventListener("click", () => {
-    screenCount = 2;
-    console.log(screenCount);
-    showScreen(screenCount);
-  });
-// カメラ選択ボタン
-const outcamera = document
-  .getElementById("outcamera")
-  .addEventListener("click", () => {
-    screenCount = 3;
-    console.log(screenCount);
-    showScreen(screenCount);
-  });
-const incamera = document
-  .getElementById("incamera")
-  .addEventListener("click", () => {
-    screenCount = 3;
-    console.log(screenCount);
-    showScreen(screenCount);
-  });
-// デモ版ボタン
-const temp = document.getElementById("temp").addEventListener("click", () => {
-  screenCount = 4;
-  console.log(screenCount);
-  showScreen(screenCount);
-});
-// 撮影開始ボタン
-const startshoot = document
-  .getElementById("startshoot")
-  .addEventListener("click", () => {
-    screenCount = 5;
-    console.log(screenCount);
-    showScreen(screenCount);
-    startCamera(); // カメラ起動関数を呼び出し
-  });
-// 背面撮影に進むボタン
-const nextshoot = document
-  .getElementById("nextshoot")
-  .addEventListener("click", () => {
-    screenCount = 6;
-    console.log(screenCount);
-    showScreen(screenCount);
-  });
-// 撮影終了ボタン
-const Shootingfinish = document
-  .getElementById("Shootingfinish")
-  .addEventListener("click", () => {
-    screenCount = 7;
-    console.log(screenCount);
-    showScreen(screenCount);
-  });
-// 撮影選択画面に戻るボタン
-const typeselectbtn = document
-  .getElementById("typeselectbtn")
-  .addEventListener("click", () => {
-    screenCount = 1;
-    console.log(screenCount);
-    showScreen(screenCount);
+  document.getElementById("RetakeF").onclick = () => togglePages("shooting");
+  document.getElementById("RetakeB").onclick = () => togglePages("shooting");
+  document.getElementById("typeselectbtn").onclick = () =>
+    togglePages("typeselect");
+  document.getElementById("retakeAll").onclick = () => togglePages("shooting");
+  document.getElementById("finish").onclick = () => togglePages("typeselect");
+
+  // メニューの表示/非表示を制御
+  const menuIcon = document.getElementById("menu-icon");
+  const navMenu = document.getElementById("nav-menu");
+  const overlay = document.getElementById("overlay");
+  menuIcon.addEventListener("click", () => {
+    navMenu.classList.toggle("show");
+    overlay.style.display = overlay.style.display === "block" ? "none" : "block";
   });
 
-// カメラ関連の設定
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-const photoF = document.getElementById("photoF");
-const photoB = document.getElementById("photoB");
-const timerElement = document.getElementById("timer");
-let isFrontCamera = true;
-let stream;
-let countdownInterval;
-
-async function startCamera() {
-  if (stream) {
-    stream.getTracks().forEach((track) => track.stop());
-  }
-
-  stream = await navigator.mediaDevices.getUserMedia({
-    video: { facingMode: isFrontCamera ? "user" : "environment" },
-    audio: false,
+  overlay.addEventListener("click", () => {
+    navMenu.classList.remove("show");
+    overlay.style.display = "none";
   });
 
-  video.srcObject = stream;
-}
+  // その他のメニューアイテムのクリックイベント
+  document.getElementById("li1").addEventListener("click", () => {
+    togglePages("typeselect");
+    navMenu.classList.remove("show");
+    overlay.style.display = "none";
+  });
 
-document.getElementById("capture").addEventListener("click", async () => {
-  timerElement.style.display = "block";
-  let countdown = 5;
-  timerElement.textContent = countdown;
+  document.getElementById("li2").addEventListener("click", () => {
+    togglePages("cameraselect");
+    navMenu.classList.remove("show");
+    overlay.style.display = "none";
+  });
 
-  clearInterval(countdownInterval);
-  countdownInterval = setInterval(() => {
-    countdown--;
-    timerElement.textContent = countdown;
-    if (countdown === 0) {
-      clearInterval(countdownInterval);
-      timerElement.style.display = "none";
-      capturePhoto();
+  document.getElementById("li3").addEventListener("click", () => {
+    togglePages("kiyaku");
+    navMenu.classList.remove("show");
+    overlay.style.display = "none";
+  });
+
+  // カメラ関連の処理
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const captureButton = document.getElementById("capture");
+  const toggleCameraButton = document.getElementById("toggle-camera");
+  const timer = document.getElementById("timer");
+
+  let stream;
+  let isFrontCamera = true;
+  let countdownTimer;
+  let currentPhotoSide = "F"; // 'F' for front, 'B' for back
+
+  const constraints = (facingMode) => ({
+    video: {
+      facingMode,
+      width: { ideal: 1280 },
+      height: { ideal: 720 },
+    },
+  });
+
+  const startCamera = async (facingMode) => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
     }
-  }, 1000);
-});
+    stream = await navigator.mediaDevices.getUserMedia(constraints(facingMode));
+    video.srcObject = stream;
+  };
 
-function capturePhoto() {
-  const context = canvas.getContext("2d");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  captureButton.addEventListener("click", () => {
+    clearInterval(countdownTimer);
+    timer.style.display = "none";
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0);
+    const photoDataUrl = canvas.toDataURL("image/png");
+    if (currentPhotoSide === "F") {
+      document.getElementById("photoF").src = photoDataUrl;
+      togglePages("previewF");
+    } else {
+      document.getElementById("photoB").src = photoDataUrl;
+      togglePages("previewB");
+    }
+  });
 
-  if (screenCount === 5) {
-    photoF.src = canvas.toDataURL("image/png");
-    screenCount = 6;
-  } else {
-    photoB.src = canvas.toDataURL("image/png");
-    screenCount = 7;
-  }
-  showScreen(screenCount);
-}
+  toggleCameraButton.addEventListener("click", () => {
+    isFrontCamera = !isFrontCamera;
+    startCamera(isFrontCamera ? "user" : "environment");
+  });
 
-document.getElementById("toggle-camera").addEventListener("click", () => {
-  isFrontCamera = !isFrontCamera;
-  startCamera();
-});
+  document.getElementById("startshoot").addEventListener("click", () => {
+    currentPhotoSide = "F";
+    startCamera("environment");
+    togglePages("shooting");
+  });
 
-// メニューボタンの設定
-const menuIcon = document.getElementById("menu-icon");
-const navMenu = document.getElementById("nav-menu");
-const overlay = document.getElementById("overlay");
+  document.getElementById("nextshoot").addEventListener("click", () => {
+    currentPhotoSide = "B";
+    startCamera("environment");
+    togglePages("shooting");
+  });
 
-menuIcon.addEventListener("click", () => {
-  navMenu.classList.toggle("show");
-  overlay.classList.toggle("show");
-});
+  // タイマー表示
+  const startCountdown = (duration) => {
+    timer.style.display = "block";
+    let timeLeft = duration;
+    timer.textContent = timeLeft;
+    countdownTimer = setInterval(() => {
+      timeLeft -= 1;
+      timer.textContent = timeLeft;
+      if (timeLeft <= 0) {
+        clearInterval(countdownTimer);
+        timer.style.display = "none";
+        captureButton.click();
+      }
+    }, 1000);
+  };
 
-overlay.addEventListener("click", () => {
-  navMenu.classList.remove("show");
-  overlay.classList.remove("show");
+  // 撮影開始時にカウントダウンを開始
+  document.getElementById("startshoot").addEventListener("click", () => {
+    startCountdown(5); // 5秒カウントダウン
+  });
+
+  document.getElementById("nextshoot").addEventListener("click", () => {
+    startCountdown(5); // 5秒カウントダウン
+  });
 });
