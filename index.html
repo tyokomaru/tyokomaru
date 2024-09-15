@@ -3,24 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>撮影アプリ</title>
-    <style></style>
+    <title>アバター型紙 撮影アプリ</title>
+    <!-- フォントの埋め込みコード -->
+    <!-- <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=BIZ+UD+Gothic:wght@400;700&display=swap"
+    /> -->
     <link rel="stylesheet" href="style.css" />
     <!-- CSSファイルをリンク -->
   </head>
 
-
   <body>
-    <header>
+    <header style="background-image: url('images/header.png')">
       <!-- <h3>タブメニュー</h3> -->
-      <button id="back-button">戻る</button>
+      <button id="back-button">
+        <img src="images/backbtn.png" alt="戻る" />
+      </button>
 
+      <!-- インジケーターがでます -->
+      <span id="indicator"></span>
 
-      <div id="menu-icon">&#9776;</div>
+      <div id="menu-icon">
+        <!-- &#9776; -->
+        <img src="images/menuicon.png" alt="メニュー" />
+      </div>
       <nav id="nav-menu">
         <ul>
           <li id="li1">服の種類選択画面に戻る</li>
-          <li id="li2">撮影方法</li>
+          <li id="li2">アプリ概要</li>
           <li id="li3">利用規約</li>
         </ul>
       </nav>
@@ -28,116 +38,260 @@
     <!-- 追加: オーバーレイ要素 -->
     <div class="overlay" id="overlay"></div>
 
-
-    <!-- 規約画面 -->
+    <!-- 規約画面 scr0 -->
+    <!-- 規約は別にして、スタート画面にする -->
     <div class="scr" id="kiyaku">
-      <p>規約(初回だけ表示させる)</p>
-      <button id="kiyakudoui">同意する</button>
+      <h3>―　このアプリでできること　―</h3>
+      <p>
+        服の画像を用いて、アバターの衣装テンプレートのデザインを加工できます。
+      </p>
+      <h3>―　手順　―</h3>
+
+      <div id="tezyun">
+        <p>
+          ①　服を準備します <br />
+          ②　作成する服の種類を以下から選択してください <br />
+          トップス／ボトムス／ワンピース <br />
+          ③　画面の指示に従い服を<br />
+          ④ <br />
+          ⑤＝＝＝＝
+        </p>
+      </div>
+      <button id="kiyakudoui">
+        <img src="images/startbtn.png" alt="スタート" />
+      </button>
+      <button onclick="showScreen(11)">デバッグ用ボタン</button>
     </div>
 
-
-    <!-- タイプ選択画面 -->
+    <!-- タイプ選択画面 scr1 -->
     <div class="scr" id="typeselect">
       <p>服の種類を選んでください</p>
-      <button id="tops">トップス</button>
-      <button id="bottoms">ボトムス</button>
+      <button id="tops">
+        <img src="" alt="Icon" class="button-img" />
+        <span>トップス</span>
+        <img src="" alt="▽" class="button-icon" />
+      </button>
+      <button id="bottoms">
+        <img src="" alt="Icon" class="button-img" />
+        <span>ボトムス</span>
+        <img src="" alt="▽" class="button-icon" />
+      </button>
+      <button id="dress">
+        <img src="" alt="Icon" class="button-img" />
+        <span>ワンピース(Coming soon)</span>
+      </button>
     </div>
-    <!-- 撮影方法選択画面 -->
+    <!-- 撮影方法選択画面 scr2 -->
     <div class="scr" id="cameraselect">
-      <p>撮影方法を選んでください</p>
+      <p>服の種類を選んでください</p>
       <!-- 外カメ内カメ変更ボタン -->
-      <button id="outcamera">外カメ</button>
-      <button id="incamera">内カメ</button>
+      <button class="topbottom">
+        <img src="" alt="Icon" class="button-img" />
+        <span>トップス</span>
+        <img src="" alt="▽" class="button-icon" />
+      </button>
+      <button id="hiddenbottom" class="topbottom" style="display: none">
+        <img src="" alt="Icon" class="button-img" />
+        <span>ボトムス</span>
+        <img src="" alt="▽" class="button-icon" />
+      </button>
+      <button id="outcamera">
+        外カメ=置く <span>柄のある服はこちら</span>
+      </button>
+      <button id="incamera">
+        内カメ=着用
+        <span>ーーーーはこちら</span>
+      </button>
     </div>
-    <!-- トップス画面orボトムス画面　(テンプレ選択) -->
+    <!-- トップス画面orボトムス画面　(テンプレ選択) scr3 -->
     <div class="scr" id="tempselect">
-      <p>服の形を選んでください(トップスボトムス2種つくる)</p>
-      <div id="button-container">
-        <!-- ボタンがここに挿入されます -->
+      <p>服の種類を選択してください</p>
+      <div id="button-container" class="scroll-box">
+        <div class="f_area">
+          <!-- ボタンがここに追加される(横スクロール) -->
+        </div>
       </div>
-      <!-- <button>1</button><button>2</button><button>3</button><button>4</button
-      ><button>5</button> -->
-      <button id="temp">デモ版はこのボタン</button>
+
+      <button id="temp">デバッグ用ボタンからでもいけます</button>
     </div>
-    <!-- 撮影注意画面 -->
+    <!-- 撮影注意画面 scr4 -->
     <div class="scr" id="Beforeshooting">
       <p>撮影時の注意点</p>
-      <button id="startshoot">撮影開始</button>
+      <p>
+        今から3回（前面・背面・袖）撮影します<br />
+        　　　　　　 ー　撮影場所　ー<br />
+        服の柄がしっかりと映る<br />
+        明るい場所で撮影してください。<br />
+
+        <br />
+        ー　撮影方法　ー<br />
+        服のガイドが赤色で表示されます。<br />
+        少しはみ出すように撮影してください。<br />
+      </p>
+      <button id="startshoot">
+        <img src="images/satueikaisi.png" alt="撮影開始" />
+      </button>
     </div>
-    <!-- 撮影画面 -->
+    <!-- 撮影画面 scr5 -->
     <div class="scr" id="shooting">
       <p id="shootingtext">前面を撮影してください</p>
+      <p>※タップでガイドの色が変わります</p>
       <!-- カメラ本体 -->
       <div class="camera-container">
         <video id="video" autoplay muted playsinline></video>
         <div>
           <!-- ガイドフレーム -->
-          <img
-            class="guide-frame"
-            src="maruma-ku-illust3.png"
-            alt="ガイド画像がでます"
-          />
+          <img class="guide-frame" src="" alt="フレーム画像がでます" />
           <!-- 追加: タイマー表示 -->
           <div id="timer">5</div>
         </div>
-        <!-- 撮影ボタン -->
+      </div>
+      <!-- ↓撮影のための描画キャンバス -->
+      <canvas id="canvas" style="visibility: hidden"></canvas>
+
+      <!-- 撮影ボタン類 -->
+      <div class="btnGroup">
+        <button id="upbtn">img</button>
         <button id="capture">撮影</button>
-        <button id="toggle-camera">カメラ切り替え</button>
-
-
-        <!-- ↓カメラの付属 -->
-        <canvas id="canvas" style="display: none"></canvas>
+        <button id="toggle-camera">切替</button>
       </div>
     </div>
-    <!-- 確認画面（前） -->
+
+    <!-- 確認画面（前） scr6 -->
     <div class="scr" id="previewF">
       <p>プレビュー（前）</p>
-      <div>
+      <div class="photostyle">
         <img id="photoF" alt="ここに撮影した前面画像がでます" />
+        <button class="retakestyle" id="RetakeF">
+          <img src="images/retake.png" alt="撮りなおす" />
+        </button>
+        <button id="nextshoot">
+          <img src="images/nextShot.png" alt="保存して進む" />
+        </button>
       </div>
-      <button id="RetakeF">撮りなおす</button>
-      <button id="nextshoot">背面撮影に進む</button>
     </div>
-    <!-- 確認画面（背） -->
+    <!-- 確認画面（背） scr7 -->
     <div class="scr" id="previewB">
       <p>プレビュー（背）</p>
-      <div>
+      <div class="photostyle">
         <img id="photoB" alt="ここに撮影した背面画像がでます" />
+        <button class="retakestyle" id="RetakeB">
+          <img src="images/retake.png" alt="撮りなおす" />
+        </button>
+        <button id="Shootingfinish">
+          <img src="images/nextShot.png" alt="保存して進む" />
+        </button>
       </div>
-      <button id="RetakeB">撮りなおす</button>
-      <button id="Shootingfinish">進む</button>
     </div>
-    <!-- トップスの場合の袖選択画面3つ -->
-    <div class="scr" id="sleeve1"><p>袖について1</p></div>
-    <div class="scr" id="sleeve2"><p>袖について2</p></div>
-    <div class="scr" id="sleeve3"><p>袖について3</p></div>
+    <!-- トップスの場合の袖選択画面3つ  scr8-->
+    <div class="scr" id="sleeve1">
+      <p>袖と背面部分は<br />同じデザイン（色や柄）ですか</p>
+      <button onclick="toggleChildButtons('sleeve1-yes')">同じ色や柄</button>
+      <button id="sleeveParent" onclick="handleAnswer('no', 'sleeve1')">
+        袖だけ違う色や柄（重ね着含む）
+      </button>
+      <!-- 子ボタン: 袖1-同じ色柄 -->
+      <div class="child-buttons" id="sleeve1-yes" style="display: none">
+        <button onclick="handleAnswer('yes', 'sleeve3')">
+          背面にデザインが入っている
+        </button>
+        <button onclick="handleAnswer('no', 'sleeve3')">
+          背面にデザインが入っていない
+        </button>
+      </div>
+    </div>
+    <!--トップスの場合の袖選択画面3つ  scr9  -->
+    <div class="scr" id="sleeve2">
+      <p>袖部分を撮影してください</p>
+      <p>柄がある場合・・・</p>
+      <!-- カメラ本体 -->
+      <div class="camera-container">
+        <video id="video2" autoplay muted playsinline></video>
+        <div>
+          <!-- ガイドフレーム -->
+          <img class="guide-frame2" src="" alt="袖フレーム画像がでます" />
+          <!-- 追加: タイマー表示 -->
+          <div id="timer">5</div>
+        </div>
+      </div>
+      <!-- ↓撮影のための描画キャンバス -->
+      <canvas id="canvas2" style="visibility: hidden"></canvas>
 
+      <!-- 撮影ボタン類 -->
+      <div class="btnGroup">
+        <button id="upbtn2">img</button>
+        <button id="capture2">撮影</button>
+        <button id="toggle-camera2">切替</button>
+      </div>
 
-    <!-- 確認画面（最終） -->
+      <!-- 袖3に遷移 -->
+    </div>
+    <!--トップスの場合の袖選択画面3つ  scr10  -->
+    <div class="scr" id="sleeve3">
+      <p>この画像をテンプレートに使用します</p>
+
+      <img id="photoS" alt="ここに撮影した袖画像がでます" />
+      <button class="retakestyle" id="RetakeS">
+        <img src="images/retake.png" alt="撮りなおす" />
+      </button>
+      <button id="sleeveFinish">
+        <img src="images/nextShot.png" alt="保存して進む" />
+      </button>
+
+      <canvas id="input" style="display: none"></canvas>
+      <canvas id="output" style="visibility: hidden"></canvas>
+    </div>
+
+    <!-- 確認画面（最終）scr11 -->
     <div class="scr" id="finalconfirmation">
-      <p>完成画像をだす</p>
-      <a id="download" style="display: none">ダウンロード</a>
+      <p>完成したテンプレート</p>
+
+      <img src="" alt="着せ付けたイメージ画像?" />
       <button id="retakeAll">撮り直す</button>
-      <button id="finish">撮影終了</button>
+      <a id="download">ダウンロード</a>
     </div>
-    <!-- 最終画面 -->
-    <div class="scr">
 
-      <!--8/8追加-->
-    <div class="scr" id="finalconfirmation">
-        <p>完成画像をだす</p>
-        <a id="download" style="display: none">ダウンロード</a>
-        <button id="retakeAll">撮り直す</button>
-        <button id="finish">撮影終了</button>
-      </div>
-
-      <p>撮影終了</p>
-      <button id="typeselectbtn">撮影選択画面に戻る</button>
-    </div>
-    <!-- メニューからの遷移先画面 -->
+    <!-- 最終画面 scr12 -->
     <div class="scr">
-      <p>利用規約とか撮影方法の画面をつくる</p>
+      <p>
+        作成したテンプレートは<br />
+        「 <span id="templateValue"></span> 」 <br />ダウンロードした<br />
+        ーー<br />
+        ーー
+      </p>
+      <img src="" alt="完成した型紙画像" />
+      <button id="typeselectbtn">他のテンプレートを作成する</button>
+      <button onclick="closeapp()">アプリを終了する</button>
     </div>
+
+    <div class="scr" id="gaiyouTab">
+      <!-- メニューからの遷移画面 scr13 -->
+      <h3>―　このアプリでできること　―</h3>
+      <p>
+        服の画像を用いて、アバターの衣装テンプレートのデザインを加工できます。
+      </p>
+      <h3>―　手順　―</h3>
+
+      <p>
+        ①　服を準備します <br />
+        ②　作成する服の種類を以下から選択してください <br />
+        トップス／ボトムス／ワンピース <br />
+        ③　画面の指示に従い服を<br />
+        ④ <br />
+        ⑤＝＝＝＝
+      </p>
+      <button class="TabBack">
+        <img src="images/tabbtn.png" alt="前の画面に戻る" />
+      </button>
+    </div>
+    <!-- メニューからの遷移先画面 scr14 -->
+    <div class="scr" id="kiyakuTab">
+      <p>利用規約</p>
+      <button class="TabBack">
+        <img src="images/tabbtn.png" alt="前の画面に戻る" />
+      </button>
+    </div>
+
     <!-- ここからJS !!! -->
     <script src="script.js"></script>
     <!-- JSファイルをリンク -->
